@@ -33,11 +33,13 @@ async def notify_users():
 
 
 async def register(websocket):
+    print("Adding User")
     USERS.add(websocket)
     await notify_users()
 
 
 async def unregister(websocket):
+    print("Removing User")
     USERS.remove(websocket)
     await notify_users()
 
@@ -73,7 +75,7 @@ async def counter(websocket, path):
     finally:
         await unregister(websocket)
 
-
+print("Binding to port: 6789")
 start_server = websockets.serve(counter, "127.0.0.1", 6789)
 
 asyncio.get_event_loop().run_until_complete(start_server)

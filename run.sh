@@ -1,3 +1,3 @@
 #!/bin/bash
-python /bin/server.py &
+python3 /bin/server.py &
 apache2ctl start

@@ -1,3 +1,3 @@
 #!/bin/bash
 python3 /bin/server.py &
-apache2ctl start
+apache2ctl -D FOREGROUND

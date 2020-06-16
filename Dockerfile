@@ -14,5 +14,5 @@ RUN cp /peoplecounter/server.py /bin
 RUN cp /peoplecounter/run.sh /bin
 RUN chmod +x /bin/run.sh
 
-EXPOSE 80
+EXPOSE 80 6789
 CMD ["/bin/run.sh", "-D", "FOREGROUND"]

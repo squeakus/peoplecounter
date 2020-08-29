@@ -410,6 +410,15 @@ while True:
 
             nn_frame, bboxes = show_nn(nnet_prev["entries_prev"][camera], frame, labels=labels, config=config)
 
+            # use detections to track centroids
+            tracked = ct.update(bboxes)
+
+            for (object_identification, centroid) in tracked.items():
+                text = "ID {}".format(object_identification)
+                cv2.putText(frame, text, (centroid[0] - 10, centroid[1] - 10),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
+                cv2.circle(frame, (centroid[0], centroid[1]), 4, (255, 255, 255), -1)
+
             if enable_object_tracker and tracklets is not None:
                 nn_frame = show_tracklets(tracklets, nn_frame, labels)
             cv2.putText(nn_frame, "fps: " + str(frame_count_prev[window_name]), (25, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 0))

@@ -46,11 +46,11 @@ def show_mobilenet_ssd(entries_prev, frame, **kwargs):
 
         pt1 = int(e[0]['left']  * img_w), int(e[0]['top']    * img_h)
         pt2 = int(e[0]['right'] * img_w), int(e[0]['bottom'] * img_h)
-        bboxes.append((pt1, pt2))
         color = (0, 0, 255) # bgr
 
         x1, y1 = pt1
         x2, y2 = pt2
+        bboxes.append([x1, y1, x2, y2])
 
         cv2.rectangle(frame, pt1, pt2, color)
         # Handles case where TensorEntry object label is out if range

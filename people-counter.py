@@ -9,6 +9,7 @@ from time import time, sleep, monotonic
 from datetime import datetime
 import cv2
 import numpy as np
+from depthai_utils.centroid_tracker import CentroidTracker
 from depthai_utils.mobilenet_person_handler import decode_mobilenet_ssd, show_mobilenet_ssd
 from depthai_utils.cli_utils import parse_args
 
@@ -23,9 +24,8 @@ print('Using depthai module from: ', depthai.__file__)
 global args, cnn_model2
 try:
     args = vars(parse_args())
-    print("args", args)
 except:
-    print("no args!")
+    print("no args provided!")
     os._exit(2)
 
 compile_model = args['shaves'] is not None and args['cmx_slices'] is not None and args['NN_engines']
@@ -69,26 +69,11 @@ show_nn=show_mobilenet_ssd
 cnn_model_path = "nn/mobilenet-ssd/mobilenet-ssd"
 blob_file = "nn/mobilenet-ssd/mobilenet-ssd.blob"
 blob_file_config = "nn/mobilenet-ssd/mobilenet-ssd.json"
-
-
-blob_file2 = ""
-blob_file_config2 = ""
-cnn_model2 = None
-if args['cnn_model2']:
-    print("Using CNN2:", args['cnn_model2'])
-    cnn_model2 = args['cnn_model2']
-    cnn_model_path = consts.resource_paths.nn_resource_path + args['cnn_model2']+ "/" + args['cnn_model2']
-    blob_file2 = cnn_model_path + ".blob"
-    blob_file_config2 = cnn_model_path + ".json"
-    if not Path(blob_file2).exists():
-        cli_print("\nWARNING: NN2 blob not found in: " + blob_file2, PrintColors.WARNING)
-        os._exit(1)
-    if not Path(blob_file_config2).exists():
-        cli_print("\nWARNING: NN2 json not found in: " + blob_file_config2, PrintColors.WARNING)
-        os._exit(1)
-
 blob_file_path = Path(blob_file)
 blob_file_config_path = Path(blob_file_config)
+
+ct = CentroidTracker(maxDisappeared=40, maxDistance=500)
+
 if not blob_file_path.exists():
     cli_print("\nWARNING: NN blob not found in: " + blob_file, PrintColors.WARNING)
     os._exit(1)
@@ -198,9 +183,6 @@ config = {
     {
         'blob_file': blob_file,
         'blob_file_config': blob_file_config,
-        'blob_file2': blob_file2,
-        'blob_file_config2': blob_file_config2,
-        'calc_dist_to_bb': calc_dist_to_bb,
         'keep_aspect_ratio': not args['full_fov_nn'],
         'camera_input': args['cnn_camera'],
         'shaves' : shave_nr,
